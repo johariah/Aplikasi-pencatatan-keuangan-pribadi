@@ -1,484 +1,415 @@
+# Aplikasi Pencatatan Uang Pribadi (Responsive)
+
+Simpan file ini dengan nama `index.html`
+
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FinTrack Pro - Keuangan Pribadi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
 
-<style>
+        body{
+            background:linear-gradient(135deg,#141e30,#243b55);
+            min-height:100vh;
+            padding:20px;
+            color:white;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
+        .container{
+            max-width:1200px;
+            margin:auto;
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
 
-body{
-    background:#0f172a;
-    color:white;
-    overflow-x:hidden;
-}
+        .header{
+            background:rgba(255,255,255,0.1);
+            backdrop-filter:blur(10px);
+            padding:25px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 5px 15px rgba(0,0,0,0.3);
+        }
 
-/* Background Glow */
+        .header h1{
+            font-size:35px;
+            margin-bottom:10px;
+        }
 
-.bg-glow{
-    position:fixed;
-    width:700px;
-    height:700px;
-    border-radius:50%;
-    background:rgba(0,255,200,0.15);
-    filter:blur(120px);
-    top:-200px;
-    left:-150px;
-    z-index:-1;
-}
+        .header p{
+            color:#ddd;
+        }
 
-.bg-glow2{
-    position:fixed;
-    width:600px;
-    height:600px;
-    border-radius:50%;
-    background:rgba(0,140,255,0.15);
-    filter:blur(120px);
-    bottom:-200px;
-    right:-150px;
-    z-index:-1;
-}
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:20px;
+        }
 
-/* Navbar */
+        .card{
+            background:rgba(255,255,255,0.1);
+            backdrop-filter:blur(10px);
+            border-radius:20px;
+            padding:25px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.3);
+            transition:0.3s;
+        }
 
-header{
-    width:100%;
-    padding:20px 8%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:1000;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(12px);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-}
+        .card:hover{
+            transform:translateY(-5px);
+        }
 
-.logo{
-    font-size:30px;
-    font-weight:700;
-}
+        .card i{
+            font-size:35px;
+            margin-bottom:15px;
+        }
 
-.logo span{
-    color:#00ffc3;
-}
+        .income{
+            border-left:6px solid #00ff95;
+        }
 
-nav a{
-    text-decoration:none;
-    color:white;
-    margin-left:25px;
-    transition:0.3s;
-    font-weight:500;
-}
+        .expense{
+            border-left:6px solid #ff4d6d;
+        }
 
-nav a:hover{
-    color:#00ffc3;
-}
+        .balance{
+            border-left:6px solid #00c3ff;
+        }
 
-/* Hero */
+        .card h2{
+            margin-bottom:10px;
+            font-size:20px;
+        }
 
-.hero{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:120px 8% 60px;
-}
+        .card p{
+            font-size:28px;
+            font-weight:bold;
+        }
 
-.hero-container{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:60px;
-    flex-wrap:wrap;
-}
+        .main-content{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:20px;
+        }
 
-.hero-text{
-    flex:1;
-    min-width:320px;
-    animation:fadeIn 1.5s ease;
-}
+        .box{
+            background:rgba(255,255,255,0.1);
+            backdrop-filter:blur(10px);
+            border-radius:20px;
+            padding:25px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.3);
+        }
 
-.hero-text h1{
-    font-size:4.2rem;
-    line-height:1.2;
-    margin-bottom:25px;
-}
+        .box h2{
+            margin-bottom:20px;
+        }
 
-.hero-text h1 span{
-    color:#00ffc3;
-}
+        .form-group{
+            display:flex;
+            flex-direction:column;
+            margin-bottom:15px;
+        }
 
-.hero-text p{
-    color:#d1d5db;
-    line-height:1.9;
-    font-size:1.1rem;
-    margin-bottom:35px;
-}
+        .form-group label{
+            margin-bottom:8px;
+            font-weight:bold;
+        }
 
-.btn-group{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-}
+        .form-group input,
+        .form-group select{
+            padding:12px;
+            border:none;
+            border-radius:10px;
+            outline:none;
+            font-size:16px;
+        }
 
-.btn{
-    padding:15px 35px;
-    border-radius:50px;
-    text-decoration:none;
-    font-weight:600;
-    transition:0.3s;
-}
+        button{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:12px;
+            background:#00c3ff;
+            color:white;
+            font-size:17px;
+            cursor:pointer;
+            transition:0.3s;
+            font-weight:bold;
+        }
 
-.btn-primary{
-    background:linear-gradient(45deg,#00ffc3,#00b3ff);
-    color:#111827;
-}
+        button:hover{
+            background:#0099cc;
+        }
 
-.btn-primary:hover{
-    transform:translateY(-5px);
-    box-shadow:0 15px 25px rgba(0,255,195,0.25);
-}
+        .history{
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+            max-height:500px;
+            overflow-y:auto;
+        }
 
-.btn-outline{
-    border:2px solid rgba(255,255,255,0.2);
-    color:white;
-}
+        .item{
+            background:rgba(255,255,255,0.08);
+            padding:15px;
+            border-radius:15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:10px;
+        }
 
-.btn-outline:hover{
-    background:white;
-    color:#111827;
-}
+        .item-info{
+            display:flex;
+            flex-direction:column;
+            gap:5px;
+        }
 
-/* Dashboard Card */
+        .item-title{
+            font-weight:bold;
+            font-size:18px;
+        }
 
-.hero-image{
-    flex:1;
-    min-width:320px;
-    display:flex;
-    justify-content:center;
-}
+        .green{
+            color:#00ff95;
+            font-weight:bold;
+        }
 
-.dashboard{
-    width:380px;
-    background:rgba(255,255,255,0.07);
-    border:1px solid rgba(255,255,255,0.08);
-    border-radius:30px;
-    padding:30px;
-    backdrop-filter:blur(20px);
-    box-shadow:0 10px 35px rgba(0,0,0,0.4);
-    animation:float 4s ease-in-out infinite;
-}
+        .red{
+            color:#ff4d6d;
+            font-weight:bold;
+        }
 
-.dashboard-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-}
+        .delete-btn{
+            background:#ff4d6d;
+            width:auto;
+            padding:10px 15px;
+        }
 
-.dashboard-top h3{
-    font-size:1.4rem;
-}
+        .delete-btn:hover{
+            background:#d63452;
+        }
 
-.balance-card{
-    background:linear-gradient(135deg,#00ffc3,#00b3ff);
-    padding:25px;
-    border-radius:25px;
-    color:#111827;
-    margin-bottom:25px;
-}
+        @media(max-width:900px){
+            .main-content{
+                grid-template-columns:1fr;
+            }
+        }
 
-.balance-card h2{
-    font-size:2.3rem;
-    margin-top:10px;
-}
+        @media(max-width:600px){
+            .header h1{
+                font-size:28px;
+            }
 
-.stats{
-    display:flex;
-    gap:15px;
-    margin-bottom:25px;
-}
+            .card p{
+                font-size:22px;
+            }
 
-.stat-box{
-    flex:1;
-    padding:18px;
-    border-radius:20px;
-    text-align:center;
-    background:rgba(255,255,255,0.05);
-}
+            .item{
+                flex-direction:column;
+                align-items:flex-start;
+            }
 
-.income{
-    border:1px solid rgba(0,255,120,0.3);
-}
-
-.expense{
-    border:1px solid rgba(255,80,80,0.3);
-}
-
-.transaction{
-    background:rgba(255,255,255,0.05);
-    border-radius:18px;
-    padding:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:12px;
-}
-
-.plus{
-    color:#00ff9d;
-}
-
-.minus{
-    color:#ff5f7a;
-}
-
-/* Features */
-
-.features{
-    padding:80px 8%;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:30px;
-}
-
-.feature-card{
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.08);
-    padding:35px;
-    border-radius:25px;
-    transition:0.4s;
-    backdrop-filter:blur(12px);
-}
-
-.feature-card:hover{
-    transform:translateY(-10px);
-    box-shadow:0 15px 35px rgba(0,0,0,0.25);
-}
-
-.feature-card .icon{
-    font-size:50px;
-    margin-bottom:20px;
-}
-
-.feature-card h3{
-    margin-bottom:15px;
-}
-
-.feature-card p{
-    color:#cbd5e1;
-    line-height:1.7;
-}
-
-/* Footer */
-
-footer{
-    text-align:center;
-    padding:25px;
-    margin-top:40px;
-    border-top:1px solid rgba(255,255,255,0.08);
-    color:#94a3b8;
-}
-
-/* Animasi */
-
-@keyframes float{
-    0%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-12px);
-    }
-    100%{
-        transform:translateY(0);
-    }
-}
-
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:translateY(30px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-/* Responsive */
-
-@media(max-width:900px){
-
-    .hero-container{
-        flex-direction:column;
-    }
-
-    .hero-text h1{
-        font-size:2.8rem;
-    }
-
-    header{
-        flex-direction:column;
-        gap:10px;
-    }
-
-    nav a{
-        margin:0 10px;
-    }
-
-}
-
-</style>
+            .delete-btn{
+                width:100%;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="bg-glow"></div>
-<div class="bg-glow2"></div>
+<div class="container">
 
-<header>
+    <div class="header">
+        <h1><i class="fa-solid fa-wallet"></i> Money Tracker</h1>
+        <p>Aplikasi Pencatatan Uang Pribadi Responsive</p>
+    </div>
 
-<div class="logo">
-Fin<span>Track</span>
-</div>
+    <div class="cards">
 
-<nav>
-<a href="#">Beranda</a>
-<a href="#">Transaksi</a>
-<a href="#">Laporan</a>
-<a href="#">Profil</a>
-</nav>
+        <div class="card balance">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <h2>Total Saldo</h2>
+            <p id="balance">Rp 0</p>
+        </div>
 
-</header>
+        <div class="card income">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <h2>Total Pemasukan</h2>
+            <p id="income">Rp 0</p>
+        </div>
 
-<section class="hero">
+        <div class="card expense">
+            <i class="fa-solid fa-arrow-trend-down"></i>
+            <h2>Total Pengeluaran</h2>
+            <p id="expense">Rp 0</p>
+        </div>
 
-<div class="hero-container">
+    </div>
 
-<div class="hero-text">
+    <div class="main-content">
 
-<h1>
-Kelola <span>Keuangan Pribadi</span> Lebih Modern
-</h1>
+        <div class="box">
+            <h2>Tambah Transaksi</h2>
 
-<p>
-Aplikasi pencatatan keuangan modern untuk membantu mengatur pemasukan,
-pengeluaran, dan target tabungan dengan tampilan premium yang nyaman digunakan.
-</p>
+            <div class="form-group">
+                <label>Nama Transaksi</label>
+                <input type="text" id="text" placeholder="Contoh: Gaji Bulanan">
+            </div>
 
-<div class="btn-group">
+            <div class="form-group">
+                <label>Jumlah Uang</label>
+                <input type="number" id="amount" placeholder="Masukkan jumlah uang">
+            </div>
 
-<a href="#" class="btn btn-primary">
-Mulai Sekarang
-</a>
+            <div class="form-group">
+                <label>Jenis</label>
+                <select id="type">
+                    <option value="income">Pemasukan</option>
+                    <option value="expense">Pengeluaran</option>
+                </select>
+            </div>
 
-<a href="#" class="btn btn-outline">
-Lihat Demo
-</a>
+            <button onclick="addTransaction()">
+                <i class="fa-solid fa-plus"></i> Tambah Data
+            </button>
+        </div>
 
-</div>
+        <div class="box">
+            <h2>Riwayat Transaksi</h2>
 
-</div>
+            <div class="history" id="history">
 
-<div class="hero-image">
+            </div>
+        </div>
 
-<div class="dashboard">
-
-<div class="dashboard-top">
-<h3>Dashboard</h3>
-<span>📊</span>
-</div>
-
-<div class="balance-card">
-<p>Total Saldo</p>
-<h2>Rp 12.500.000</h2>
-</div>
-
-<div class="stats">
-
-<div class="stat-box income">
-<p>Pemasukan</p>
-<h3>Rp 8jt</h3>
-</div>
-
-<div class="stat-box expense">
-<p>Pengeluaran</p>
-<h3>Rp 3jt</h3>
-</div>
+    </div>
 
 </div>
 
-<div class="transaction">
-<span>💰 Gaji Bulanan</span>
-<strong class="plus">+ Rp 4.000.000</strong>
-</div>
+<script>
 
-<div class="transaction">
-<span>🛒 Belanja</span>
-<strong class="minus">- Rp 750.000</strong>
-</div>
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-<div class="transaction">
-<span>🚗 Transportasi</span>
-<strong class="minus">- Rp 150.000</strong>
-</div>
+    function saveData(){
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+    }
 
-<div class="transaction">
-<span>🍔 Makan</span>
-<strong class="minus">- Rp 200.000</strong>
-</div>
+    function formatRupiah(number){
+        return 'Rp ' + number.toLocaleString('id-ID');
+    }
 
-</div>
+    function updateUI(){
 
-</div>
+        const history = document.getElementById('history');
+        history.innerHTML = '';
 
-</div>
+        let totalIncome = 0;
+        let totalExpense = 0;
 
-</section>
+        transactions.forEach((transaction,index)=>{
 
-<section class="features">
+            if(transaction.type === 'income'){
+                totalIncome += transaction.amount;
+            } else {
+                totalExpense += transaction.amount;
+            }
 
-<div class="feature-card">
-<div class="icon">💸</div>
-<h3>Pencatatan Harian</h3>
-<p>
-Catat semua pemasukan dan pengeluaran dengan cepat dan mudah.
-</p>
-</div>
+            const div = document.createElement('div');
+            div.classList.add('item');
 
-<div class="feature-card">
-<div class="icon">📈</div>
-<h3>Grafik Interaktif</h3>
-<p>
-Pantau perkembangan keuangan melalui grafik modern dan responsif.
-</p>
-</div>
+            div.innerHTML = `
+                <div class="item-info">
+                    <span class="item-title">${transaction.text}</span>
+                    <small>${transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</small>
+                </div>
 
-<div class="feature-card">
-<div class="icon">🔒</div>
-<h3>Keamanan Data</h3>
-<p>
-Data keuangan tersimpan aman dan mudah diakses kapan saja.
-</p>
-</div>
+                <div class="${transaction.type === 'income' ? 'green' : 'red'}">
+                    ${transaction.type === 'income' ? '+' : '-'} ${formatRupiah(transaction.amount)}
+                </div>
 
-</section>
+                <button class="delete-btn" onclick="deleteTransaction(${index})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            `;
 
-<footer>
-© 2026 FinTrack Pro - Aplikasi Keuangan Pribadi
-</footer>
+            history.appendChild(div);
+        });
+
+        const balance = totalIncome - totalExpense;
+
+        document.getElementById('income').innerText = formatRupiah(totalIncome);
+        document.getElementById('expense').innerText = formatRupiah(totalExpense);
+        document.getElementById('balance').innerText = formatRupiah(balance);
+
+        saveData();
+    }
+
+    function addTransaction(){
+
+        const text = document.getElementById('text').value;
+        const amount = parseInt(document.getElementById('amount').value);
+        const type = document.getElementById('type').value;
+
+        if(text === '' || isNaN(amount)){
+            alert('Isi data terlebih dahulu!');
+            return;
+        }
+
+        transactions.push({
+            text,
+            amount,
+            type
+        });
+
+        document.getElementById('text').value = '';
+        document.getElementById('amount').value = '';
+
+        updateUI();
+    }
+
+    function deleteTransaction(index){
+        transactions.splice(index,1);
+        updateUI();
+    }
+
+    updateUI();
+
+</script>
 
 </body>
 </html>
+```
+
+## Fitur Aplikasi
+
+* Responsive di Laptop dan HP
+* Total Saldo
+* Total Pemasukan
+* Total Pengeluaran
+* Tambah Transaksi
+* Hapus Transaksi
+* Riwayat Transaksi Menyusun ke Bawah
+* Data otomatis tersimpan di LocalStorage
+* Tampilan modern glassmorphism
+
+## Cara Menjalankan
+
+1. Buka VS Code
+2. Buat file `index.html`
+3. Salin semua kode di atas
+4. Simpan
+5. Klik 2x file HTML atau gunakan Live Server
