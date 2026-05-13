@@ -1,0 +1,15 @@
+# .gitignore untuk FinTrack
+
+# File sementara
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+# File konfigurasi sensitif (kalau ada)
+config.php.bak
+database.php.bak
+
+# Folder cache / vendor (kalau pakai Composer nanti)
+vendor/
