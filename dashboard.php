@@ -1,0 +1,186 @@
+<?php
+require 'config.php';
+if (!isLoggedIn()) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Ambil ringkasan keuangan
+$stmt = $pdo->prepare("SELECT 
+    SUM(CASE WHEN tipe='income' THEN jumlah ELSE 0 END) as total_income,
+    SUM(CASE WHEN tipe='expense' THEN jumlah ELSE 0 END) as total_expense 
+    FROM transactions WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$summary = $stmt->fetch();
+
+$total_income = $summary['total_income'] ?? 0;
+$total_expense = $summary['total_expense'] ?? 0;
+$balance = $total_income - $total_expense;
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FinTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-size: 16px; /* penting untuk mobile */
+        }
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(10px);
+        }
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-action {
+            padding: 14px 0;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark rounded-3 mb-4 sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="dashboard.php">
+                <i class="fas fa-wallet"></i> FinTrack
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link active" href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
+                    <a class="nav-link" href="transaksi.php"><i class="fas fa-plus-circle"></i> Transaksi</a>
+                    <a class="nav-link" href="riwayat.php"><i class="fas fa-history"></i> Riwayat</a>
+                    <a class="nav-link" href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
+                    <a class="nav-link text-danger" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="text-center mb-5 text-white">
+        <h1 class="fw-bold">Selamat datang, <?= htmlspecialchars($_SESSION['nama'] ?? 'User') ?> 👋</h1>
+    </div>
+
+    <!-- Statistik -->
+    <div class="row g-3">
+        <div class="col-12 col-md-4">
+            <div class="card text-white bg-primary stat-card h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="mb-1">Saldo Saat Ini</h6>
+                    <h3 class="mb-0">Rp <?= number_format($balance) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card text-white bg-success stat-card h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="mb-1">Total Pemasukan</h6>
+                    <h3 class="mb-0">Rp <?= number_format($total_income) ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="card text-white bg-danger stat-card h-100">
+                <div class="card-body text-center py-4">
+                    <h6 class="mb-1">Total Pengeluaran</h6>
+                    <h3 class="mb-0">Rp <?= number_format($total_expense) ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 g-3">
+        <!-- Grafik -->
+        <div class="col-12 col-lg-7">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Grafik Keuangan</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="financeChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="col-12 col-lg-5">
+            <div class="d-grid gap-3">
+                <a href="transaksi.php" class="btn btn-success btn-action btn-lg">
+                    <i class="fas fa-plus-circle fa-2x mb-2"></i><br>
+                    <strong>Tambah Transaksi</strong>
+                </a>
+                <a href="riwayat.php" class="btn btn-info btn-action btn-lg text-white">
+                    <i class="fas fa-history fa-2x mb-2"></i><br>
+                    <strong>Lihat Riwayat</strong>
+                </a>
+                <a href="laporan.php" class="btn btn-warning btn-action btn-lg text-dark">
+                    <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
+                    <strong>Laporan Bulanan</strong>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+new Chart(document.getElementById('financeChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Pemasukan', 'Pengeluaran'],
+        datasets: [{
+            data: [<?= $total_income ?>, <?= $total_expense ?>],
+            backgroundColor: ['#28a745', '#dc3545'],
+            borderWidth: 3,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#333', font: { size: 14 } } }
+        }
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
