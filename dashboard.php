@@ -26,53 +26,29 @@ $balance = $total_income - $total_expense;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - FinTrack</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-size: 16px; /* penting untuk mobile */
         }
         .card {
             border: none;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         .navbar {
-            background-color: rgba(0, 0, 0, 0.85) !important;
-            backdrop-filter: blur(10px);
-        }
-        .stat-card {
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .btn-action {
-            padding: 14px 0;
-            font-size: 1.1rem;
-        }
-        @media (max-width: 768px) {
-            .container {
-                padding-left: 12px;
-                padding-right: 12px;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
+            background-color: rgba(0, 0, 0, 0.8) !important;
         }
     </style>
 </head>
 <body>
-
-<div class="container py-4">
+<div class="container py-5">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark rounded-3 mb-4 sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark rounded-3 mb-4">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="dashboard.php">
                 <i class="fas fa-wallet"></i> FinTrack
@@ -83,7 +59,7 @@ $balance = $total_income - $total_expense;
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
                     <a class="nav-link active" href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
-                    <a class="nav-link" href="transaksi.php"><i class="fas fa-plus-circle"></i> Transaksi</a>
+                    <a class="nav-link" href="transaksi.php"><i class="fas fa-plus-circle"></i> Tambah</a>
                     <a class="nav-link" href="riwayat.php"><i class="fas fa-history"></i> Riwayat</a>
                     <a class="nav-link" href="laporan.php"><i class="fas fa-chart-bar"></i> Laporan</a>
                     <a class="nav-link text-danger" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -92,68 +68,60 @@ $balance = $total_income - $total_expense;
         </div>
     </nav>
 
-    <!-- Header -->
+    <!-- Header Selamat Datang -->
     <div class="text-center mb-5 text-white">
-        <h1 class="fw-bold">Selamat datang, <?= htmlspecialchars($_SESSION['nama'] ?? 'User') ?> 👋</h1>
+        <h1>Selamat datang, <?= htmlspecialchars($_SESSION['nama'] ?? 'User') ?> 👋</h1>
     </div>
 
-    <!-- Statistik -->
-    <div class="row g-3">
-        <div class="col-12 col-md-4">
-            <div class="card text-white bg-primary stat-card h-100">
-                <div class="card-body text-center py-4">
-                    <h6 class="mb-1">Saldo Saat Ini</h6>
-                    <h3 class="mb-0">Rp <?= number_format($balance) ?></h3>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5>Saldo Saat Ini</h5>
+                    <h3>Rp <?= number_format($balance) ?></h3>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="card text-white bg-success stat-card h-100">
-                <div class="card-body text-center py-4">
-                    <h6 class="mb-1">Total Pemasukan</h6>
-                    <h3 class="mb-0">Rp <?= number_format($total_income) ?></h3>
+        <div class="col-md-4">
+            <div class="card text-white bg-success">
+                <div class="card-body text-center">
+                    <h5>Total Pemasukan</h5>
+                    <h3>Rp <?= number_format($total_income) ?></h3>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="card text-white bg-danger stat-card h-100">
-                <div class="card-body text-center py-4">
-                    <h6 class="mb-1">Total Pengeluaran</h6>
-                    <h3 class="mb-0">Rp <?= number_format($total_expense) ?></h3>
+        <div class="col-md-4">
+            <div class="card text-white bg-danger">
+                <div class="card-body text-center">
+                    <h5>Total Pengeluaran</h5>
+                    <h3>Rp <?= number_format($total_expense) ?></h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4 g-3">
-        <!-- Grafik -->
-        <div class="col-12 col-lg-7">
+    <div class="row mt-4">
+        <div class="col-md-8">
             <div class="card">
-                <div class="card-header bg-white">
-                    <h5 class="mb-0">Grafik Keuangan</h5>
+                <div class="card-header">
+                    <h5>Grafik Keuangan</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="financeChart" height="220"></canvas>
+                    <canvas id="financeChart" height="130"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Tombol Aksi -->
-        <div class="col-12 col-lg-5">
-            <div class="d-grid gap-3">
-                <a href="transaksi.php" class="btn btn-success btn-action btn-lg">
-                    <i class="fas fa-plus-circle fa-2x mb-2"></i><br>
-                    <strong>Tambah Transaksi</strong>
-                </a>
-                <a href="riwayat.php" class="btn btn-info btn-action btn-lg text-white">
-                    <i class="fas fa-history fa-2x mb-2"></i><br>
-                    <strong>Lihat Riwayat</strong>
-                </a>
-                <a href="laporan.php" class="btn btn-warning btn-action btn-lg text-dark">
-                    <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
-                    <strong>Laporan Bulanan</strong>
-                </a>
-            </div>
+        <div class="col-md-4">
+            <a href="transaksi.php" class="btn btn-success btn-lg w-100 mb-3 py-3">
+                <i class="fas fa-plus-circle"></i><br>Tambah Transaksi
+            </a>
+            <a href="riwayat.php" class="btn btn-info btn-lg w-100 mb-3 py-3 text-white">
+                <i class="fas fa-history"></i><br>Lihat Riwayat
+            </a>
+            <a href="laporan.php" class="btn btn-warning btn-lg w-100 py-3 text-dark">
+                <i class="fas fa-chart-bar"></i><br>Laporan Bulanan
+            </a>
         </div>
     </div>
 
@@ -166,21 +134,13 @@ new Chart(document.getElementById('financeChart'), {
         labels: ['Pemasukan', 'Pengeluaran'],
         datasets: [{
             data: [<?= $total_income ?>, <?= $total_expense ?>],
-            backgroundColor: ['#28a745', '#dc3545'],
-            borderWidth: 3,
-            borderColor: '#fff'
+            backgroundColor: ['#28a745', '#dc3545']
         }]
     },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { color: '#333', font: { size: 14 } } }
-        }
-    }
+    options: { responsive: true }
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
