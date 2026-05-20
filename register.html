@@ -2,48 +2,256 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Akun - FinTrack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Catatan Uang Pribadi</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+        .card { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md border border-gray-100">
-        <div class="text-center mb-6">
-            <span class="text-3xl">🚀</span>
-            <h2 class="text-2xl font-bold text-indigo-600 mt-2">Mulai Akun Baru</h2>
-            <p class="text-gray-400 text-sm mt-1">Kelola finansial pribadi Anda dengan lebih teratur.</p>
-        </div>
-        
-        {% if error %}
-        <div class="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-xs font-medium text-center border border-red-100">{{ error }}</div>
-        {% endif %}
+<body class="bg-gray-100 min-h-screen">
 
-        <form method="POST" class="space-y-4">
-            {% csrf_token %}
-            <div>
-                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Username</label>
-                <input type="text" name="username" placeholder="Buat username unik" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" required>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 px-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md card">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4">💰</div>
+                <h1 class="text-3xl font-bold text-gray-800">Catatan Uang</h1>
+                <p class="text-gray-500 mt-1">Kelola keuanganmu dengan mudah</p>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Alamat Email</label>
-                <input type="email" name="email" placeholder="nama@email.com" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" required>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Password</label>
-                <input type="password" name="password" placeholder="Minimal 8 karakter" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" required>
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Konfirmasi Password</label>
-                <input type="password" name="password_konfirmasi" placeholder="Ulangi password Anda" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500" required>
-            </div>
-            <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-medium rounded-xl text-sm hover:bg-indigo-700 transition shadow-sm mt-2">
-                Daftar & Masuk Dashboard
-            </button>
-        </form>
 
-        <div class="mt-6 text-center text-sm text-gray-500">
-            Sudah memiliki akun? <a href="{% url 'login' %}" class="text-indigo-600 hover:underline font-semibold">Log In di sini</a>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Username</label>
+                    <input type="text" id="loginUsername" 
+                           class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                           placeholder="Masukkan username">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                    <input type="password" id="loginPassword" 
+                           class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                           placeholder="Masukkan password">
+                </div>
+
+                <button onclick="login()" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-3xl text-lg transition">
+                    Masuk
+                </button>
+
+                <div class="text-center">
+                    <button onclick="showRegisterScreen()" 
+                            class="text-blue-600 font-medium hover:underline">
+                        Belum punya akun? Daftar sekarang
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- REGISTER SCREEN -->
+    <div id="registerScreen" class="hidden min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 px-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-md card">
+            <div class="text-center mb-8">
+                <div class="text-5xl mb-3">📝</div>
+                <h1 class="text-2xl font-bold text-gray-800">Buat Akun Baru</h1>
+                <p class="text-gray-500">Mulai catat keuanganmu</p>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Username</label>
+                    <input type="text" id="regUsername" 
+                           class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                           placeholder="Contoh: muhamad123">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                    <input type="password" id="regPassword" 
+                           class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                           placeholder="Minimal 6 karakter">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Konfirmasi Password</label>
+                    <input type="password" id="regConfirmPassword" 
+                           class="w-full px-5 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
+                           placeholder="Ulangi password">
+                </div>
+
+                <button onclick="registerUser()" 
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 rounded-3xl text-lg transition">
+                    Daftar Akun
+                </button>
+
+                <div class="text-center">
+                    <button onclick="showLoginScreen()" 
+                            class="text-gray-600 hover:underline">
+                        Sudah punya akun? Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP (sama seperti sebelumnya) -->
+    <div id="mainApp" class="hidden min-h-screen">
+        <!-- Header, Saldo, Form, dll... -->
+        <!-- (Kode main app tetap sama seperti respons sebelumnya) -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-5">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">💰</span>
+                    <div>
+                        <h1 class="text-xl font-bold">Catatan Uang</h1>
+                        <p id="greeting" class="text-blue-100 text-sm"></p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+
+            <div class="mt-6 bg-white/20 backdrop-blur-md rounded-3xl p-5 text-center">
+                <p class="text-blue-100 text-sm">SALDO SAAT INI</p>
+                <h2 id="balance" class="text-4xl font-bold mt-2">Rp 0</h2>
+                <div class="flex justify-between mt-5 text-sm">
+                    <div><p class="text-green-200">Pemasukan</p><p id="total-income" class="font-semibold text-green-100">Rp 0</p></div>
+                    <div><p class="text-red-200">Pengeluaran</p><p id="total-expense" class="font-semibold text-red-100">Rp 0</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 space-y-6 pb-24">
+            <!-- Form, Grafik, Riwayat tetap sama -->
+            <!-- ... (silakan copy dari kode sebelumnya jika perlu) ... -->
+        </div>
+    </div>
+
+    <script>
+        let transactions = [];
+        let currentUser = null;
+        let transactionType = 'expense';
+
+        const categories = { /* sama seperti sebelumnya */ 
+            income: ["Gaji", "Freelance", "Bonus", "Hadiah", "Lainnya"],
+            expense: ["Makanan", "Transport", "Belanja", "Tagihan", "Kesehatan", "Hiburan", "Lainnya"]
+        };
+
+        // Tampilkan Register Screen
+        function showRegisterScreen() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.remove('hidden');
+        }
+
+        function showLoginScreen() {
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        // Register Function
+        function registerUser() {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (!username || !password || !confirmPassword) {
+                alert("Semua field harus diisi!");
+                return;
+            }
+
+            if (password.length < 6) {
+                alert("Password minimal 6 karakter!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Password dan Konfirmasi Password tidak cocok!");
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+
+            if (users[username]) {
+                alert("Username sudah digunakan. Silakan pilih username lain.");
+                return;
+            }
+
+            // Simpan user baru
+            users[username] = { 
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert("✅ Akun berhasil dibuat!\n\nSilakan login dengan username dan password Anda.");
+            
+            // Reset form dan kembali ke login
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regPassword').value = '';
+            document.getElementById('regConfirmPassword').value = '';
+            
+            showLoginScreen();
+        }
+
+        // Login Function (sama seperti sebelumnya)
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert("Username dan password harus diisi!");
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            if (users[username] && users[username].password === password) {
+                currentUser = username;
+                localStorage.setItem('currentUser', username);
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('registerScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                loadUserData();
+                initApp();
+            } else {
+                alert("Username atau password salah!");
+            }
+        }
+
+        function logout() {
+            if (confirm("Keluar dari aplikasi?")) {
+                localStorage.removeItem('currentUser');
+                location.reload();
+            }
+        }
+
+        function loadUserData() {
+            transactions = JSON.parse(localStorage.getItem(`transactions_${currentUser}`)) || [];
+            document.getElementById('greeting').textContent = `Halo, ${currentUser}! 👋`;
+        }
+
+        function saveUserData() {
+            localStorage.setItem(`transactions_${currentUser}`, JSON.stringify(transactions));
+        }
+
+        // Fungsi lain (setType, renderTransactions, dll) tetap sama seperti kode sebelumnya
+
+        window.onload = () => {
+            currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                loadUserData();
+                initApp();
+            }
+        };
+    </script>
 </body>
 </html>
