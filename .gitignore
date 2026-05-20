@@ -1,15 +1,8 @@
-# .gitignore untuk FinTrack
-
-# File sementara
+*.pyc
+*~
+__pycache__/
+db.sqlite3
+myenv/
+venv/
+.env
 .DS_Store
-Thumbs.db
-*.log
-*.tmp
-*.bak
-
-# File konfigurasi sensitif (kalau ada)
-config.php.bak
-database.php.bak
-
-# Folder cache / vendor (kalau pakai Composer nanti)
-vendor/
