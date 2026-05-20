@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pembayaran COD - KFC</title>
+  <link rel="stylesheet" href="{% static 'main/home.css' %}">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url("{% static 'main/images/metode3.jpeg' %}");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    h2 {
+      color: #d72323;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      text-align: left;
+    }
+
+    .info p, ul {
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    button {
+      background-color: #d72323;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #aa1a1a;
+    }
+
+    .note {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Konfirmasi Pembayaran - COD</h2>
+
+    <div class="info">
+      <p><strong>Nama Pemesan:</strong> Neza Fatma Anarti</p>
+      <p><strong>Alamat Pengiriman:</strong> Jl. Merdeka No.88, suralaga</p>
+      <p><strong>No. HP:</strong> 0877-2380-6895</p>
+      <p><strong>Pesanan:</strong></p>
+      <ul>
+        <li>2x Ayam Crispy</li>

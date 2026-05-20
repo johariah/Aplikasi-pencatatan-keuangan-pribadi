@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}KFC Online{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body style="background:#f8f8f8; font-family:sans-serif;">
+    <header style="background:#d72323; padding:20px; color:white; text-align:center;">
+        <h1>KFC Online Ordering</h1>
+    </header>
+
+    <main style="padding:30px;">
+        {% block content %}
+        <!-- Konten halaman anak akan dimuat di sini -->
+        {% endblock %}
+    </main>
+
+    <footer style="background:#333; color:white; padding:10px; text-align:center;">
+        &copy; 2025 KFC Indonesia
+    </footer>
+</body>
+</html>
