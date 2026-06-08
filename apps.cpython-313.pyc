@@ -1,31 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.utils import timezone
-from .models import Transaksi
-import csv
-import json
-from django.http import HttpResponse
-
-# ==========================================
-# 1. LOGIKA HALAMAN DASHBOARD PREMIUM
-# ==========================================
-@login_required(login_url='login')
-def dashboard(request):
-    # Ambil filter bulan & tahun dari URL (GET). Jika tidak memilih, default ke waktu sekarang.
-    bulan_sekarang = timezone.now().month
-    tahun_sekarang = timezone.now().year
-    
-    bulan_dipilih = int(request.GET.get('bulan', bulan_sekarang))
-    tahun_dipilih = int(request.GET.get('tahun', tahun_sekarang))
-
-    # Saring transaksi milik user berdasarkan bulan dan tahun yang dipilih
-    transaksi_user = Transaksi.objects.filter(
-        user=request.user,
-        date__month=bulan_dipilih,
-        date__year=tahun_dipilih
+fr
     ).order_by('-date')
     
     # Hitung total nominal pemasukan & pengeluaran sesuai nama di HTML Anda
